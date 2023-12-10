@@ -1,0 +1,16 @@
+name: Сборка Docker-образа
+on:
+push:
+branches: [master]
+jobs:
+build:
+runs-on: ubuntu-latest
+steps:
+- name: Загрузка кода
+uses: actions/checkout@v2
+- name: Сборка Docker-образа
+uses: docker/build-push-action@v2
+with:
+context: .
+push: true
+tags: amolokov/diplom:latest
