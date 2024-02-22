@@ -47,8 +47,23 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use repository
+        uses: actions/checkout@v2
+      - name: Upload repository
+        uses: actions/upload-artifact@v2
+        with:
+          name: repository
+          path: |
+            ${{ github.workspace }}/diplom-chart
+            ${{ github.workspace }}/Dockerfile
+            ${{ github.workspace }}/README.md
+            ${{ github.workspace }}/requirements.txt
+                       
   push-to-k8s:
-    needs: [build-and-push]
+    needs: [build-and-push, setup]
     runs-on: ubuntu-latest
     steps:
       - name: Download repository
