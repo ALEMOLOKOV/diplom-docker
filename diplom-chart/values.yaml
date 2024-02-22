@@ -1,0 +1,33 @@
+# Default values for diplom-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 3
+
+namespace: app
+image:
+  repository: amolokov/diplom
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+dataset: dataset-app
+
+deployment:
+  name: deploy-app
+
+service:
+  name: helm-svc
+  type: NodePort
+  ports:
+    nodePort: 31150
+
+resources:
+   limits:
+     cpu: 100m
+     memory: 128Mi
+   requests:
+     cpu: 100m
+     memory: 128Mi
+
+appPort: 80
