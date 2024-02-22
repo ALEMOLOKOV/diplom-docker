@@ -86,5 +86,5 @@ jobs:
       - name: Deploy
         run: |
           helm upgrade --install --atomic --timeout 5s rest ./diplom-chart/ -f ./diplom-chart/values.yaml \
-            --kube-context default --namespace app --create-namespace \
+            --kube-context kubernetes-admin@cluster.local --namespace app --create-namespace \
             --set image.tag=${{ steps.meta.outputs.tags }}
