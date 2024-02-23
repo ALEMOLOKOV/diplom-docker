@@ -8,7 +8,7 @@ on:
     - "v*.*.*"
       
 jobs:
-  build-and-push:
+  docker-build-and-push:
     runs-on: ubuntu-latest
     steps:
 
@@ -63,7 +63,7 @@ jobs:
             ${{ github.workspace }}/requirements.txt
                        
   push-to-k8s:
-    needs: [build-and-push, setup]
+    needs: [docker-build-and-push, setup]
     runs-on: ubuntu-latest
     steps:
       - name: Download repository
