@@ -87,10 +87,12 @@ jobs:
       - name: Lint helm charts
         run: helm lint ./diplom-chart/
       - name: Connect to K8S
-        run: ssh -tt -o StrictHostKeyChecking=no ${{secrets.DOCKER_USER}}@${{secrets.IP_MASTER}}
+        run: |
+          ssh -tt -o StrictHostKeyChecking=no ${{secrets.DOCKER_USER}}@${{secrets.IP_MASTER}}
+          sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ steps.meta.outputs.tags }}
       - name: Update app
         run: |
-          sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ steps.meta.outputs.tags }}
+          # sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ steps.meta.outputs.tags }}
           curl ${{secrets.IP_MASTER}}:31150
                        
   # push-to-k8s:
