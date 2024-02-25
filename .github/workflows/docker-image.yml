@@ -61,20 +61,19 @@ jobs:
             ${{ github.workspace }}/Dockerfile
             ${{ github.workspace }}/README.md
             ${{ github.workspace }}/requirements.txt
-                       
+
   push-to-k8s:
-    needs: [docker-build-and-push, setup]
-    runs-on: ubuntu-latest
-    steps:
+     needs: [docker-build-and-push, setup]
+     runs-on: ubuntu-latest
+     steps:
       - name: Download repository
         uses: actions/download-artifact@v2
         with:
           name: repository
-      - name: Create kube config
+      - name: add ssh
         run: |
-          mkdir -p $HOME/.kube/
-          echo "${{ secrets.K8S_CONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
+          echo "${{ secrets.SSH_PUB }}" > ~/.ssh/id_rsa.pub
+          echo "${{ secrets.SSH_PR }}" > ~/.ssh/id_rsa
       - name: Install helm
         run: |
           curl -LO https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz
@@ -85,6 +84,34 @@ jobs:
         run: helm lint ./diplom-chart/
       - name: Deploy
         run: |
+          ssh ${{secrets.DOCKER_USER}}@${{secrets.IP_MASTER}}
           helm upgrade --install --atomic --timeout 5s rest ./diplom-chart/ -f ./diplom-chart/values.yaml \
             --kube-context kubernetes-admin@cluster.local --namespace app --create-namespace \
             --set image.tag=${{ steps.meta.outputs.tags }}
+                       
+  # push-to-k8s:
+  #   needs: [docker-build-and-push, setup]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download repository
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: repository
+  #     - name: Create kube config
+  #       run: |
+  #         mkdir -p $HOME/.kube/
+  #         echo "${{ secrets.K8S_CONFIG }}" > $HOME/.kube/config
+  #         chmod 600 $HOME/.kube/config
+  #     - name: Install helm
+  #       run: |
+  #         curl -LO https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz
+  #         tar -zxvf helm-v3.8.0-linux-amd64.tar.gz
+  #         mv linux-amd64/helm /usr/local/bin/helm
+  #         helm version
+  #     - name: Lint helm charts
+  #       run: helm lint ./diplom-chart/
+  #     - name: Deploy
+  #       run: |
+  #         helm upgrade --install --atomic --timeout 5s rest ./diplom-chart/ -f ./diplom-chart/values.yaml \
+  #           --kube-context kubernetes-admin@cluster.local --namespace app --create-namespace \
+  #           --set image.tag=${{ steps.meta.outputs.tags }}
