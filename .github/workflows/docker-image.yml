@@ -76,6 +76,8 @@ jobs:
           chmod 700 ~/.ssh
           echo "${{ secrets.SSH_PUB }}" > ~/.ssh/id_rsa.pub
           echo "${{ secrets.SSH_PR }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa.pub
+          chmod 600 ~/.ssh/id_rsa
       - name: Install helm
         run: |
           curl -LO https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz
