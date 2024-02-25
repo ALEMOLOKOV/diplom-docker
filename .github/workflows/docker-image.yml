@@ -70,7 +70,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: repository
-      - name: add ssh
+      - name: Add ssh
         run: |
           echo "${{ secrets.SSH_PUB }}" > ~/.ssh/id_rsa.pub
           echo "${{ secrets.SSH_PR }}" > ~/.ssh/id_rsa
@@ -82,7 +82,7 @@ jobs:
           helm version
       - name: Lint helm charts
         run: helm lint ./diplom-chart/
-      - name: Deploy
+      - name: Deploy to K8S
         run: |
           ssh ${{secrets.DOCKER_USER}}@${{secrets.IP_MASTER}}
           helm upgrade --install --atomic --timeout 5s rest ./diplom-chart/ -f ./diplom-chart/values.yaml \
