@@ -89,10 +89,8 @@ jobs:
       - name: Connect to K8S
         run: |
           ssh -tt -o StrictHostKeyChecking=no ${{secrets.DOCKER_USER}}@${{secrets.IP_MASTER}}
-      - run: sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ steps.meta.outputs.tags }}
-      - name: Update app
-        run: |
-          curl ${{secrets.IP_MASTER}}:31150
+            - run: sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ steps.meta.outputs.tags }}
+            - run: curl ${{secrets.IP_MASTER}}:31150
                        
   # push-to-k8s:
   #   needs: [docker-build-and-push, setup]
