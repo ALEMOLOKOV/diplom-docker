@@ -87,10 +87,19 @@ jobs:
       - name: Lint helm charts
         run: helm lint ./diplom-chart/
       - name: Connect to K8S
-        run: |
-          ssh -tt -o StrictHostKeyChecking=no ${{secrets.DOCKER_USER}}@${{secrets.IP_MASTER}}
-            - run: sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ steps.meta.outputs.tags }}
-            - run: curl ${{secrets.IP_MASTER}}:31150
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP_MASTER }}
+          username: ${{ secrets.DOCKER_USER }}
+          key: ${{ secrets.SSH_PR }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ steps.meta.outputs.tags }}
+            
+        # run: |
+        #   ssh -tt -o StrictHostKeyChecking=no ${{secrets.DOCKER_USER}}@${{secrets.IP_MASTER}}
+        #     - run: sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ steps.meta.outputs.tags }}
+        #     - run: curl ${{secrets.IP_MASTER}}:31150
                        
   # push-to-k8s:
   #   needs: [docker-build-and-push, setup]
