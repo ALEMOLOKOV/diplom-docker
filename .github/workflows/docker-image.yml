@@ -72,6 +72,6 @@ jobs:
           key: ${{ secrets.SSH_PR }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=v1.0.9
+            sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{needs.docker-build-and-push.steps.meta.outputs.tags}}
             
  
