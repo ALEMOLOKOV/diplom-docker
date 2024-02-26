@@ -9,10 +9,10 @@ on:
       
 jobs:
      
-  docker-build-and-push:
+  docker:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.bap.outputs.tag }}
+      tag: ${{ steps.meta.outputs.tag }}
     steps:
 
       - name: Checkout
@@ -51,8 +51,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  push-to-k8s:
-     needs: [ docker-build-and-push]
+  k8s:
+     needs: [ docker]
      runs-on: ubuntu-latest
      steps:
       - name: Connect to K8S
@@ -63,6 +63,6 @@ jobs:
           key: ${{ secrets.SSH_PR }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{needs.docker-build-and-push.outputs.tag}}
+            sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{needs.docker.outputs.tag}}
             
  
