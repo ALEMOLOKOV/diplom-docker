@@ -8,6 +8,19 @@ on:
     - "v*.*.*"
       
 jobs:
+
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      repo: ${{ steps.vars.outputs.repo }}
+      tag: ${{ steps.vars.outputs.tag }}
+    steps:
+      - name: Build variables
+        id: vars
+        run: |
+          echo "::set-output name=repo::$GITHUB_REPOSITORY"
+          echo "::set-output name=tag::$(git rev-parse --short "$GITHUB_SHA")"
+      
   docker-build-and-push:
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +61,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   push-to-k8s:
-     needs: [docker-build-and-push]
+     needs: [setup, docker-build-and-push]
      runs-on: ubuntu-latest
      steps:
       - name: Connect to K8S
@@ -59,6 +72,6 @@ jobs:
           key: ${{ secrets.SSH_PR }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ needs.docker-build-and-push.outputs.tags }}
+            sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ needs.setup.outputs.tags }}
             
  
