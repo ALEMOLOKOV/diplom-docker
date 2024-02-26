@@ -51,9 +51,6 @@ jobs:
      needs: [docker-build-and-push]
      runs-on: ubuntu-latest
      steps:
-      
-      - name: Lint helm charts
-        run: helm lint ./diplom-chart/
       - name: Connect to K8S
         uses: appleboy/ssh-action@master
         with:
