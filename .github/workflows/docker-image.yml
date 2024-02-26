@@ -53,6 +53,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
      
       - name: Build and push
+        id: bap
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -72,6 +73,6 @@ jobs:
           key: ${{ secrets.SSH_PR }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{needs.docker-build-and-push.steps.meta.outputs.tags}}
+            sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{needs.docker-build-and-push.bap.outputs.tags}}
             
  
