@@ -52,7 +52,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   k8s:
-     needs: [ docker]
+     needs: docker
      runs-on: ubuntu-latest
      steps:
       - name: Connect to K8S
