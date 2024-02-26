@@ -47,21 +47,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  # setup:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Use repository
-  #       uses: actions/checkout@v2
-  #     - name: Upload repository
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: repository
-  #         path: |
-  #           ${{ github.workspace }}/diplom-chart
-  #           ${{ github.workspace }}/Dockerfile
-  #           ${{ github.workspace }}/README.md
-  #           ${{ github.workspace }}/requirements.txt
-
   push-to-k8s:
      needs: [docker-build-and-push]
      runs-on: ubuntu-latest
@@ -96,11 +81,7 @@ jobs:
           script: |
             sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ need.docker-build-and-push.outputs.tags }}
             
-        # run: |
-        #   ssh -tt -o StrictHostKeyChecking=no ${{secrets.DOCKER_USER}}@${{secrets.IP_MASTER}}
-        #     - run: sudo helm upgrade diplom-chart-chart diplom-chart -n app --set image.tag=${{ steps.meta.outputs.tags }}
-        #     - run: curl ${{secrets.IP_MASTER}}:31150
-                       
+                             
   # push-to-k8s:
   #   needs: [docker-build-and-push, setup]
   #   runs-on: ubuntu-latest
