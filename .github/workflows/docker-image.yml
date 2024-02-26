@@ -51,24 +51,7 @@ jobs:
      needs: [docker-build-and-push]
      runs-on: ubuntu-latest
      steps:
-      - name: Download repository
-        uses: actions/download-artifact@v2
-        with:
-          name: repository
-      - name: Add ssh
-        run: |
-          mkdir -p ~/.ssh/
-          chmod 700 ~/.ssh
-          echo "${{ secrets.SSH_PUB }}" > ~/.ssh/id_rsa.pub
-          echo "${{ secrets.SSH_PR }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa.pub
-          chmod 600 ~/.ssh/id_rsa
-      - name: Install helm
-        run: |
-          curl -LO https://get.helm.sh/helm-v3.8.0-linux-amd64.tar.gz
-          tar -zxvf helm-v3.8.0-linux-amd64.tar.gz
-          mv linux-amd64/helm /usr/local/bin/helm
-          helm version
+      
       - name: Lint helm charts
         run: helm lint ./diplom-chart/
       - name: Connect to K8S
