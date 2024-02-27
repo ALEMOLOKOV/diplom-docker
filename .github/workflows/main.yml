@@ -5,25 +5,27 @@ on:
     branches:
       - main
 
-env:
-  DOCKER_USERNAME: amolokov
-  DOCKER_PASSWORD: dckr_pat_VlTWbnBIv-XkM3SghNFrjJeu0z8
-
 jobs:
-  build-and-push:
+   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+     -
+        name: Checkout 
         uses: actions/checkout@v2
-      - name: Login to Docker Hub
+      -
+        name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
-          username: amolokov
-          password: dckr_pat_VlTWbnBIv-XkM3SghNFrjJeu0z8
-      - name: Build Docker image
-        run: |
-          docker build -t diplom:latest .
-      - name: Push Docker image
-        run: |
-          docker tag diplom:latest amolokov/diplom:latest
-          docker push amolokov/diplom:latest
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USER }}/diplom:latest
